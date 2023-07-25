@@ -1,2 +1,2 @@
 # LikeLion_BAOBOB
-likelion_BAOBOB_eCommerce_Service
+likelion_BAOBOB_Library
