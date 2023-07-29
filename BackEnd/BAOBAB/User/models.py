@@ -47,7 +47,5 @@ class User(AbstractBaseUser, TimestampedModel):
         return token
     
 class UserImage(models.Model):
-    id = models.AutoField(primary_key=True)
-    
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='user_images/', blank=True, null=True)

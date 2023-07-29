@@ -57,8 +57,11 @@ INSTALLED_APPS = [
     
     "User",
     
+    "Annotation",
     "Book",
+    "Bookmark",
     "Category",
+    "Comment",
 ]
 
 MIDDLEWARE = [
