@@ -19,7 +19,7 @@ from Book.models import *
         
 #         return book
 
-class BookCreateSerializer(serializers.ModelSerializer):
+class CreateBookSerializer(serializers.ModelSerializer):
     book_file = serializers.FileField(write_only=True)
     book_cover = serializers.ImageField(write_only=True)
 

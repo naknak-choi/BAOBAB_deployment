@@ -19,7 +19,7 @@ from rest_framework import status
 #             return Response(book_info_serializers.errors, status=status.HTTP_400_BAD_REQUEST)
         
 class CreateBookView(generics.CreateAPIView):
-    serializer_class = BookCreateSerializer
+    serializer_class = CreateBookSerializer
     permission_classes = [IsAdminUser]
     
     def create(self, request, *args, **kwargs):
@@ -62,14 +62,12 @@ class BookStatsAddView(generics.UpdateAPIView):
             
             book_stats = BookStats.objects.get(book_id=book_id)
             
-            print(type(request.data.get('average_rating')))
-            
             rating_count = book_stats.rating_count
             average_rating = book_stats.average_rating
             new_rating = float(request.data.get('average_rating'))
             
             if new_rating is None or new_rating < 0 or new_rating > 5:
-                return Response({"error":"Invalid rating value"},status=status.HTTP_400_BAD_REQUEST)
+                return Response({"error":"Invalid rating"},status=status.HTTP_400_BAD_REQUEST)
             
             new_rating = round(new_rating, 1)
             rating_count += 1
