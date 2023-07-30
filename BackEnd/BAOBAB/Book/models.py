@@ -57,16 +57,26 @@ class BookInfo(models.Model):
 class BookFile(models.Model):
     book_id = models.OneToOneField(BookInfo, on_delete=models.CASCADE)
     book_file = models.FileField(upload_to='media/bookFile/')
+    
+    def __str__(self):
+        return self.book_id.book_Name + "File"
 
 
 class BookCover(models.Model):
     book_id = models.OneToOneField(BookInfo, on_delete=models.CASCADE)
     book_cover = models.ImageField(upload_to='media/bookCover/')
+    
+    def __str__(self):
+        return self.book_id.book_Name + "Cover"
 
 
 class BookStats(models.Model):
     book_id = models.OneToOneField(BookInfo, on_delete=models.CASCADE)
     
-    rating = models.FloatField(default=0.0)
+    average_rating = models.FloatField(default=0.0)
+    rating_count = models.IntegerField(default=0)
     liked = models.IntegerField(default=0)
     views = models.IntegerField(default=0)
+    
+    def __str__(self):
+        return self.book_id.book_Name + "Stats"

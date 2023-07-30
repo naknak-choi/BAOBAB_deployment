@@ -38,7 +38,7 @@ class BookCreateSerializer(serializers.ModelSerializer):
 
         return book
 
-class BookStatsSerializer(serializers.ModelSerializer):
+class BookRatingSerializer(serializers.ModelSerializer):
     class Meta:
-        model = BookInfo
-        fields = '__all__'
+        model = BookStats
+        fields = ['average_rating']
