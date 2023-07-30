@@ -20,7 +20,7 @@ def sub_category_validator(value):
 
 class BookInfo(models.Model):
     book_id = models.AutoField(primary_key=True)
-    mainCategory = models.OneToOneField(
+    mainCategory = models.ForeignKey(
         Category, 
         on_delete=models.SET_DEFAULT, 
         related_name='mainCategory',
@@ -28,7 +28,7 @@ class BookInfo(models.Model):
         default=default_category(),
         validators=[main_category_validator],
     )
-    subCategory = models.OneToOneField(
+    subCategory = models.ForeignKey(
         Category,
         on_delete=models.SET_DEFAULT,
         related_name='subCategory',
@@ -56,12 +56,12 @@ class BookInfo(models.Model):
 
 class BookFile(models.Model):
     book_id = models.OneToOneField(BookInfo, on_delete=models.CASCADE)
-    book_file = models.FileField()
+    book_file = models.FileField(upload_to='media/bookFile/')
 
 
 class BookCover(models.Model):
     book_id = models.OneToOneField(BookInfo, on_delete=models.CASCADE)
-    book_cover = models.ImageField()
+    book_cover = models.ImageField(upload_to='media/bookCover/')
 
 
 class BookStats(models.Model):
