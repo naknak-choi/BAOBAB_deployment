@@ -34,5 +34,11 @@ class BookCreateSerializer(serializers.ModelSerializer):
         book = BookInfo.objects.create(**validated_data)
         BookFile.objects.create(book_id=book, book_file=book_file_data)
         BookCover.objects.create(book_id=book, book_cover=book_cover_data)
+        BookStats.objects.create(book_id=book)
 
         return book
+
+class BookStatsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BookInfo
+        fields = '__all__'
