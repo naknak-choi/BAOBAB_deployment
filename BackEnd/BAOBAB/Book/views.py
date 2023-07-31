@@ -3,6 +3,7 @@ from User.api.serializers import *
 
 from rest_framework.views import APIView
 from rest_framework import generics
+from rest_framework import viewsets
 
 from rest_framework.permissions import IsAdminUser
 
@@ -10,21 +11,6 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import get_object_or_404
 
-class CreateBookView(generics.CreateAPIView):
-    serializer_class = BookSerializer
-    permission_classes = [IsAdminUser]
-    
-    def create(self, request, *args, **kwargs):
-        data = request.data
-        book_serializer = self.get_serializer(data=data)
-        
-        if book_serializer.is_valid():
-            book_serializer.save()
-            
-            return Response(book_serializer.data, status=status.HTTP_201_CREATED)
-        else:
-            return Response(book_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        
 class BookStatsAddView(generics.UpdateAPIView):
     serializer_class = BookRatingSerializer
     
@@ -57,34 +43,12 @@ class BookStatsAddView(generics.UpdateAPIView):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class BookInfoView(APIView):
-    serializer_class = BookSerializer
-
-    def get(self, request, *args, **kwargs):
-        book_id = kwargs.get('pk', None)
-        if book_id is None:
-            book = BookInfo.objects.all().order_by('created_at')
-            return Response(self.serializer_class(book, many=True).data, status=status.HTTP_200_OK)
-        
-        else :
-            # 개별 책 정보 조회 처리
-            book = get_object_or_404(BookInfo, pk=book_id)
-            serializer = self.serializer_class(book)
-            return Response(serializer.data, status=status.HTTP_200_OK)
     
-class BookUpdateView(generics.UpdateAPIView):
-    serializer_class = BookUpdateSerializer
+class BookStaffViewSet(viewsets.ModelViewSet):
+    queryset = BookInfo.objects.all()
     permission_classes = [IsAdminUser]
-
-    def put(self, request, *args, **kwargs):
-        book_id = kwargs.get('pk', None)
-        if book_id is not None:
-            # 개별 책 정보 조회 및 업데이트 처리
-            book = get_object_or_404(BookInfo, pk=book_id)
-            serializer = self.serializer_class(book, data=request.data, partial=True)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        # 아래 코드를 추가하여 book_id가 None인 경우 처리
-        return Response({"error": "Invalid book_id or book_id not provided in request"}, status=status.HTTP_400_BAD_REQUEST)
+    serializer_class = BookStaffSerializer
+    
+class BookUserViewSet(viewsets.ModelViewSet):
+    queryset = BookInfo.objects.all()
+    serializer_class = BookUserSerializer

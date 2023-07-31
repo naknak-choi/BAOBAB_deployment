@@ -13,7 +13,7 @@ class BookCoverSerializer(serializers.ModelSerializer):
         fields = ['book_cover']
         
 # BookInfo 정보 + 관련된 BookFile, BookCover 정보를 한번에 보여주기 위한 Serializer
-class BookSerializer(serializers.ModelSerializer):
+class BookStaffSerializer(serializers.ModelSerializer):
     # create시 book_file, book_cover를 받기 위한 write_only 필드
     book_file = serializers.FileField(write_only=True)
     book_cover = serializers.ImageField(write_only=True)
@@ -35,15 +35,14 @@ class BookSerializer(serializers.ModelSerializer):
         BookStats.objects.create(book_id=book)
 
         return book
+class BookUserSerializer(serializers.ModelSerializer):
+    book_file_data = BookFileSerializer(source='bookfile', read_only=True)
+    book_cover_data = BookCoverSerializer(source='bookcover', read_only=True)
+    class Meta:
+        model = BookInfo
+        fields = '__all__'
 
 class BookRatingSerializer(serializers.ModelSerializer):
     class Meta:
         model = BookStats
         fields = ['average_rating']
-        
-# class BookUpdateSerializer(serializers.ModelSerializer):
-class BookUpdateSerializer(BookSerializer):
-    def update(self, instance, validated_data):
-        intance = validated_data
-        instance.save()
-        return instance
