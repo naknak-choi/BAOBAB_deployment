@@ -3,5 +3,6 @@ from . import views
 
 urlpatterns = [
     path("uploadBook/", views.CreateBookView.as_view()),
-    path("ratingBook/<int:pk>/", views.BookStatsAddView.as_view())
+    path("ratingBook/<int:pk>/", views.BookStatsAddView.as_view()),
+    path("listup/", views.ListUpBookView.as_view()),
 ]

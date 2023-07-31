@@ -1,23 +1,16 @@
 from rest_framework import serializers
 from Book.models import *
+from User.models import *
 
+class BookFileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BookFile
+        fields = ['book_file']
         
-# class BookCreateSerializer(serializers.ModelSerializer):
-#     BookFile = BookFileSerializer()
-#     BookCover = BookCoverSerializer()
-#     class Meta:
-#         model = BookInfo
-#         fields = '__all__'
-        
-#     def create(self, validated_data):
-#         book_file_data = validated_data.pop('BookFile')
-#         book_cover_data = validated_data.pop('BookCover')
-        
-#         book = BookInfo.objects.create(**validated_data)
-#         BookFile.objects.create(book_id=book, book_file = book_file_data.get('book_file'))
-#         BookCover.objects.create(book_id=book, book_cover = book_cover_data.get('book_cover'))
-        
-#         return book
+class BookCoverSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BookCover
+        fields = ['book_cover']
 
 class CreateBookSerializer(serializers.ModelSerializer):
     book_file = serializers.FileField(write_only=True)
@@ -37,6 +30,14 @@ class CreateBookSerializer(serializers.ModelSerializer):
         BookStats.objects.create(book_id=book)
 
         return book
+
+class ListUpBookSerializer(serializers.ModelSerializer):
+    book_file = BookFileSerializer(source='bookfile')
+    book_cover = BookCoverSerializer(source='bookcover')
+
+    class Meta:
+        model = BookInfo
+        fields = '__all__'
 
 class BookRatingSerializer(serializers.ModelSerializer):
     class Meta:
