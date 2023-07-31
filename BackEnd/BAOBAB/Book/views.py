@@ -1,13 +1,17 @@
 from .api.serializers import *
 from User.api.serializers import *
 
-from rest_framework.permissions import IsAdminUser
+from rest_framework.views import APIView
 from rest_framework import generics
+
+from rest_framework.permissions import IsAdminUser
+
 from rest_framework.response import Response
 from rest_framework import status
+from django.shortcuts import get_object_or_404
 
 class CreateBookView(generics.CreateAPIView):
-    serializer_class = CreateBookSerializer
+    serializer_class = BookSerializer
     permission_classes = [IsAdminUser]
     
     def create(self, request, *args, **kwargs):
@@ -52,9 +56,35 @@ class BookStatsAddView(generics.UpdateAPIView):
             return Response(status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class BookInfoView(APIView):
+    serializer_class = BookSerializer
+
+    def get(self, request, *args, **kwargs):
+        book_id = kwargs.get('pk', None)
+        if book_id is None:
+            book = BookInfo.objects.all().order_by('created_at')
+            return Response(self.serializer_class(book, many=True).data, status=status.HTTP_200_OK)
+        
+        else :
+            # 개별 책 정보 조회 처리
+            book = get_object_or_404(BookInfo, pk=book_id)
+            serializer = self.serializer_class(book)
+            return Response(serializer.data, status=status.HTTP_200_OK)
     
-class ListUpBookView(generics.ListAPIView):
-    serializer_class = ListUpBookSerializer
-    
-    def get_queryset(self):
-        return BookInfo.objects.all().order_by('book_id')
+class BookUpdateView(generics.UpdateAPIView):
+    serializer_class = BookUpdateSerializer
+    permission_classes = [IsAdminUser]
+
+    def put(self, request, *args, **kwargs):
+        book_id = kwargs.get('pk', None)
+        if book_id is not None:
+            # 개별 책 정보 조회 및 업데이트 처리
+            book = get_object_or_404(BookInfo, pk=book_id)
+            serializer = self.serializer_class(book, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        # 아래 코드를 추가하여 book_id가 None인 경우 처리
+        return Response({"error": "Invalid book_id or book_id not provided in request"}, status=status.HTTP_400_BAD_REQUEST)
