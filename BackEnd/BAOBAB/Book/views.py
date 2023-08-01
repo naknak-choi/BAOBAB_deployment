@@ -1,26 +1,15 @@
 from .api.serializers import *
 from User.api.serializers import *
 
-from rest_framework.permissions import IsAdminUser
 from rest_framework import generics
+from rest_framework import viewsets
+
+from rest_framework.permissions import IsAdminUser
+
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.parsers import *
 
-class CreateBookView(generics.CreateAPIView):
-    serializer_class = CreateBookSerializer
-    permission_classes = [IsAdminUser]
-    
-    def create(self, request, *args, **kwargs):
-        data = request.data
-        book_serializer = self.get_serializer(data=data)
-        
-        if book_serializer.is_valid():
-            book_serializer.save()
-            
-            return Response(book_serializer.data, status=status.HTTP_201_CREATED)
-        else:
-            return Response(book_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        
 class BookStatsAddView(generics.UpdateAPIView):
     serializer_class = BookRatingSerializer
     
@@ -52,9 +41,14 @@ class BookStatsAddView(generics.UpdateAPIView):
             return Response(status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class BookStaffViewSet(viewsets.ModelViewSet):
+    queryset = BookInfo.objects.all()
+    permission_classes = [IsAdminUser]
+    serializer_class = BookStaffSerializer
+    parser_classes = [MultiPartParser, FileUploadParser]
     
-class ListUpBookView(generics.ListAPIView):
-    serializer_class = ListUpBookSerializer
-    
-    def get_queryset(self):
-        return BookInfo.objects.all().order_by('book_id')
+class BookUserViewSet(viewsets.ModelViewSet):
+    queryset = BookInfo.objects.all()
+    serializer_class = BookUserSerializer
