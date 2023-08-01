@@ -3,7 +3,7 @@ from django.conf import settings
 
 from django.contrib.auth.models import AbstractBaseUser
 
-from .api.managers import UserManager
+from .managers import UserManager
 from core.models import TimestampedModel
 
 import jwt
