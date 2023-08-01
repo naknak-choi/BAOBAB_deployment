@@ -1,7 +1,8 @@
 from django.db import models
 
 class Category(models.Model):
-    category_name = models.CharField(max_length=255, primary_key=True, unique=True)
+    category_id = models.AutoField(primary_key=True)
+    category_name = models.CharField(max_length=255, unique=True)
     mainCategory_name = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True)
     is_main = models.BooleanField(default=False)
     
