@@ -5,7 +5,6 @@ from .views import *
 staff_upload = views.BookStaffViewSet.as_view({
     'get' : 'list',
     'post' : 'create',
-
 })
 staff_edit = views.BookStaffViewSet.as_view({
     'get' : 'retrieve',
