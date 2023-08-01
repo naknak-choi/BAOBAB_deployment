@@ -47,7 +47,7 @@ class BookStaffSerializer(serializers.ModelSerializer):
             bookfile_instance.save()
 
         if book_cover:
-            bookcover_instance, _ = BookCover.objects.get_or_create(book_id=instance)
+            bookcover_instance = BookCover.objects.get_or_create(book_id=instance)
             bookcover_instance.book_cover = book_cover
             bookcover_instance.save()
 

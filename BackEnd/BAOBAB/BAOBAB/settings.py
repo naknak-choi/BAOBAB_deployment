@@ -62,6 +62,7 @@ INSTALLED_APPS = [
     "Bookmark",
     "Category",
     "Comment",
+    "UserBookLike",
 ]
 
 MIDDLEWARE = [

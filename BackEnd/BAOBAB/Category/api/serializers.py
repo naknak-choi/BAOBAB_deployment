@@ -18,6 +18,6 @@ class CategorySerializer(serializers.ModelSerializer):
             if data['mainCategory_name'] is None:
                 raise serializers.ValidationError('메인카테고리를 지정해주세요')
 
-            elif not Category.objects.filter(pk=data['mainCategory_name']).exists():
+            elif not Category.objects.filter(category_name = data['mainCategory_name']).exists():
                 raise serializers.ValidationError('메인카테고리가 존재하지 않습니다.')
             return data

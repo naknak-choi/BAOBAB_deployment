@@ -13,5 +13,5 @@ category_edit = views.CategoryViewSet.as_view({
 
 urlpatterns=[
     path("create/", category_create),
-    path("edit/<str:pk>/", category_edit)
+    path("edit/<int:pk>/", category_edit)
 ]
