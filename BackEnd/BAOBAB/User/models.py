@@ -14,8 +14,8 @@ from datetime import datetime, timedelta
 class User(AbstractBaseUser, TimestampedModel):
     id = models.AutoField(primary_key=True)
     
-    username = models.CharField(max_length=50, unique=True)
     email = models.EmailField(max_length=50, unique=True)
+    username = models.CharField(max_length=50, unique=True)
     nickname = models.CharField(max_length=50, unique=True)
     
     is_staff = models.BooleanField(default=False)

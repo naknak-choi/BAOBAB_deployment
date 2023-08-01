@@ -18,7 +18,7 @@ class CreateCategoryView(generics.CreateAPIView):
             mainCategory_name = data.get('mainCategory_name')
             
             # Json파일에서 null이 빈 문자열로 인식되는 문제 발생
-            # 추후 프론트엔드팀과 협의 후 수정 예정
+            # 추후 프론트엔드팀과 협의 후 수정 필요할 것으로 보임
             if is_main:
                 if not mainCategory_name == "":
                     return Response({'error': '메인카테고리는 하위카테고리로 설정할 수 없습니다.'}, status=status.HTTP_400_BAD_REQUEST)
