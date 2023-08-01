@@ -1,7 +1,6 @@
 from .api.serializers import *
 from User.api.serializers import *
 
-from rest_framework.views import APIView
 from rest_framework import generics
 from rest_framework import viewsets
 
@@ -9,7 +8,7 @@ from rest_framework.permissions import IsAdminUser
 
 from rest_framework.response import Response
 from rest_framework import status
-from django.shortcuts import get_object_or_404
+from rest_framework.parsers import *
 
 class BookStatsAddView(generics.UpdateAPIView):
     serializer_class = BookRatingSerializer
@@ -43,11 +42,12 @@ class BookStatsAddView(generics.UpdateAPIView):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    
+
 class BookStaffViewSet(viewsets.ModelViewSet):
     queryset = BookInfo.objects.all()
     permission_classes = [IsAdminUser]
     serializer_class = BookStaffSerializer
+    parser_classes = [MultiPartParser, FileUploadParser]
     
 class BookUserViewSet(viewsets.ModelViewSet):
     queryset = BookInfo.objects.all()
