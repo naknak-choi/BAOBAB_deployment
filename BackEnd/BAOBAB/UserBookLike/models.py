@@ -8,4 +8,4 @@ class UserBookLike(models.Model):
     book_id = models.ForeignKey('Book.BookInfo', on_delete=models.CASCADE)
     
     def __str__(self):
-        return self.user_id.user_id + ' ' + self.book_id.book_Name
+        return self.user_id.username + ' ' + self.book_id.book_Name
