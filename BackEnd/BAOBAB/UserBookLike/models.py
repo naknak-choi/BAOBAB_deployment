@@ -4,7 +4,7 @@ from django.db import models
 
 class UserBookLike(models.Model):
     list_id = models.AutoField(primary_key=True)
-    user_id = models.ForeignKey('User.User', on_delete=models.CASCADE)
+    user_id = models.ForeignKey('User.User', on_delete=models.CASCADE, related_name='user_book_like')
     book_id = models.ForeignKey('Book.BookInfo', on_delete=models.CASCADE)
     
     def __str__(self):

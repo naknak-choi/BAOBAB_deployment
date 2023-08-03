@@ -19,3 +19,8 @@ class UserBookLikePostSerializer(serializers.ModelSerializer):
             book_id=book
         )
         return user_book_like
+    
+class UserBookLikeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserBookLike
+        fields = '__all__'

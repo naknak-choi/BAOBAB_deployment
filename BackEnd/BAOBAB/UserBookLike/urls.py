@@ -6,5 +6,6 @@ from . import views
 # })
 
 urlpatterns = [
-    path("like/<int:pk>", views.UserBookLikeView.as_view())
+    path("like/<int:pk>", views.UserBookLikeView.as_view()),
+    path("like/<int:pk>/delete", views.UserBookLikeDeleteView.as_view())
 ]
