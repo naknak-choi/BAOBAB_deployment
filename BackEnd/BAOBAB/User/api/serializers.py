@@ -77,7 +77,6 @@ class LoginSerializer(serializers.Serializer):
         }
         
 
-# 1.
 class UserSerializer(serializers.ModelSerializer):
     
     # 2.
