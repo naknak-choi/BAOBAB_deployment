@@ -7,4 +7,5 @@ urlpatterns = [
     path("category/", include("Category.urls")),
     path("user_like/", include("UserBookLike.urls")),
     path("user/", include("User.urls")),
+    path('annotation/', include('Annotation.urls')),
 ]
