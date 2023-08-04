@@ -8,4 +8,6 @@ urlpatterns = [
     path("user_like/", include("UserBookLike.urls")),
     path("user/", include("User.urls")),
     path('annotation/', include('Annotation.urls')),
+    path('users/', include('User.urls'), name='User'),
+    path('comment/', include('Comment.urls')),
 ]
