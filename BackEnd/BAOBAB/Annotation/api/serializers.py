@@ -17,15 +17,14 @@ class AnnotationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Annotation
         fields = ['annotation_id', 'annotation']
-
-class AnnotationSerializer(serializers.ModelSerializer):
+        
+class AnnotationInfoSerializer(serializers.ModelSerializer):
     annotation = serializers.CharField()
     
     annotation_text = AnnotationSerializer(source='annotation', read_only=True)
     class Meta:
         model = AnnotationInfo
-        fields = ['annotation_id', 'page', 'annotation', 'annotation_text']
-        # fields = ['annotation_id', 'page', 'annotation_text']
+        fields = ['annotation_id', 'page', 'annotation_text', 'annotation']
         
     def create(self, validated_data):
         user = User.object.get(id=self.context.get('user_id'))
@@ -45,5 +44,11 @@ class AnnotationSerializer(serializers.ModelSerializer):
             annotation_id=annotation_info,
             annotation=validated_data['annotation'],
         )
-        
+        return annotation_info
+    
+    def update(self, instance, validated_data):
+        annotation_info = instance
+        annotation = annotation_info.annotation
+        annotation.annotation = validated_data['annotation']
+        annotation.save()
         return annotation_info
