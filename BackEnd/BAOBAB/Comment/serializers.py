@@ -19,7 +19,7 @@ class CommentSerializer(serializers.ModelSerializer):
         fields = ('id', 'user', 'product', 'parent', 'body', 'reply')
     
     def get_reply(self, instance):
-    	# recursive
+        # recursive
         serializer = self.__class__(instance.reply, many=True)
         serializer.bind('', self)
         return serializer.data
