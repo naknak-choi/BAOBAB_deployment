@@ -22,7 +22,7 @@ class BookInfo(models.Model):
     book_id = models.AutoField(primary_key=True)
     mainCategory = models.ForeignKey(
         Category, 
-        on_delete=models.SET_DEFAULT, 
+        on_delete=models.SET_DEFAULT,
         related_name='mainCategory',
         blank=True,
         default=default_category(),

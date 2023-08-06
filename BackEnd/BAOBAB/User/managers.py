@@ -4,7 +4,7 @@ from django.contrib.auth.models import BaseUserManager
 class UserManager(BaseUserManager):
 
     # All user
-    def create_user(self, username, email, password=None, **extra_fields):
+    def create_user(self, username, email, nickname, password=None, **extra_fields):
     
         if username is None:
             raise TypeError('Users must have a username.')
@@ -14,11 +14,15 @@ class UserManager(BaseUserManager):
 
         if password is None:
             raise TypeError('Users must have a password.')
+        
+        if nickname is None:
+            raise TypeError('Users must have a nickname.')
     
         user = self.model(
         username = username,
         # 중복 최소화를 위한 정규화
         email=self.normalize_email(email),
+        nickname = nickname,
         **extra_fields
         )
 
@@ -29,7 +33,7 @@ class UserManager(BaseUserManager):
         return user
 
     # admin user
-    def create_superuser(self, username, email, password, **extra_fields):
+    def create_superuser(self, username, email, nickname, password, **extra_fields):
         
         if password is None:
             raise TypeError('Superuser must have a password.')

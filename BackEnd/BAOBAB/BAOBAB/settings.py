@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 from pathlib import Path
 import os, json
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -53,9 +54,18 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     
-    'authentication',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
     
     "rest_framework",
+    'rest_framework.authtoken',
+    "rest_framework_simplejwt",
+    
+    'dj_rest_auth',
+    'dj_rest_auth.registration',
+    'rest_auth',
+    
     "django_extensions",
     
     "User",
@@ -151,15 +161,42 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-AUTH_USER_MODEL = 'authentication.User'
+AUTH_USER_MODEL = 'User.User'
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated'
+        'rest_framework.permissions.IsAuthenticated', # 인증된 사용자만 접근
+        # 'rest_framework.permissions.IsAdminUser', # 관리자만 접근
+        # 'rest_framework.permissions.AllowAny', # 누구나 접근
     ],
     'EXCEPTION_HANDLER': 'core.exceptions.core_exception_handler',
+    
     'NON_FIELD_ERRORS_KEY': 'error',
+    
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'User.backends.JWTAuthentication',
+        'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
     ),
+}
+
+SITE_ID = 1
+REST_USE_JWT = True
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_REQUIRED = True            # email 필드 사용 o
+ACCOUNT_EMAIL_VERIFICATION = 'none' # 회원가입 과정에서 이메일 인증 사용 X
+
+REST_AUTH = {
+    'USE_JWT': True,
+    'JWT_AUTH_COOKIE': 'auth_token',
+    'JWT_AUTH_REFRESH_COOKIE': 'refresh_token',
+}
+
+REST_AUTH_REGISTER_SERIALIZERS = {
+    'REGISTER_SERIALIZER': 'User.api.serializers.CustomRegisterSerializer',
+}
+
+ACCOUNT_ADAPTER = 'User.api.adapter.UserAdapter'
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
 }

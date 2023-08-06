@@ -4,7 +4,7 @@ from User.api.serializers import *
 from rest_framework import generics
 from rest_framework import viewsets
 
-from rest_framework.permissions import IsAdminUser
+from rest_framework.permissions import IsAdminUser, IsAuthenticated, AllowAny
 
 from rest_framework.response import Response
 from rest_framework import status
@@ -46,9 +46,12 @@ class BookStatsAddView(generics.UpdateAPIView):
 class BookStaffViewSet(viewsets.ModelViewSet):
     queryset = BookInfo.objects.all()
     permission_classes = [IsAdminUser]
+    # permission_classes = [IsAuthenticated]
     serializer_class = BookStaffSerializer
     parser_classes = [MultiPartParser, FileUploadParser]
     
 class BookUserViewSet(viewsets.ModelViewSet):
     queryset = BookInfo.objects.all()
     serializer_class = BookUserSerializer
+    permission_classes = [IsAuthenticated]
+    # permission_classes = [AllowAny]
