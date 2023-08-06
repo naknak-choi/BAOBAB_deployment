@@ -1,13 +1,11 @@
-from rest_framework import status
-from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.generics import RetrieveUpdateAPIView
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from .renderers import UserJSONRenderer
-
-# from rest_auth.registration.views import RegisterView
+from dj_rest_auth.registration.views import RegisterView
 from .serializers import CustomRegisterSerializer
+class CustomRegisterView(RegisterView):
+    serializer_class = CustomRegisterSerializer
 
+    def post(self, request, *args, **kwargs):
+        # 여기에 추가 로직을 작성한 후에, 슈퍼 클래스의 post 메서드 호출
+        return super().post(request, *args, **kwargs)
 # Create your views here.
 # class RegistrationAPIView(APIView):
 #     permission_classes = (AllowAny,)
