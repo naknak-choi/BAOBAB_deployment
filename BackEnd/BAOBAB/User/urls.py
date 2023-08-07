@@ -1,10 +1,6 @@
 from django.urls import path
-from .views import *
-from . import views
-
-user_detail = views.UserViewSets.as_view({
-    'get': 'retrieve',
-})
+from .api.views import CustomRegisterView
 
 urlpatterns = [
+    path('register/', CustomRegisterView.as_view(), name='register')
 ]

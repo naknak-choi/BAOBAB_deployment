@@ -13,6 +13,8 @@ urlpatterns = [
     path('annotation/', include('Annotation.urls')),
     path('comment/', include('Comment.urls')),
     
+    path('user/', include('User.urls')),
+    
     path('dj-rest-auth/', include('dj_rest_auth.urls')),
     path('dj-rest-auth/registration/', include('dj_rest_auth.registration.urls')),
     # path('dj-rest-auth/registration/', RegisterView.as_view(), name='account_register'),
