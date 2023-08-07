@@ -46,7 +46,6 @@ class BookStatsAddView(generics.UpdateAPIView):
 class BookStaffViewSet(viewsets.ModelViewSet):
     queryset = BookInfo.objects.all()
     permission_classes = [IsAdminUser]
-    # permission_classes = [IsAuthenticated]
     serializer_class = BookStaffSerializer
     parser_classes = [MultiPartParser, FileUploadParser]
     
@@ -54,4 +53,3 @@ class BookUserViewSet(viewsets.ModelViewSet):
     queryset = BookInfo.objects.all()
     serializer_class = BookUserSerializer
     permission_classes = [IsAuthenticated]
-    # permission_classes = [AllowAny]

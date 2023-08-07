@@ -1,68 +1,119 @@
+from .serializers import UserRegisterSerializer, UserSerializer
+from BAOBAB.settings import SECRET_KEY
+from User.models import User
+
 from dj_rest_auth.registration.views import RegisterView
-from .serializers import CustomRegisterSerializer
+
+from django.contrib.auth import authenticate
+from django.shortcuts import render, get_object_or_404
+
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenRefreshSerializer
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.views import APIView
+
+import jwt
 class CustomRegisterView(RegisterView):
-    serializer_class = CustomRegisterSerializer
-
     def post(self, request, *args, **kwargs):
-        # 여기에 추가 로직을 작성한 후에, 슈퍼 클래스의 post 메서드 호출
-        return super().post(request, *args, **kwargs)
-# Create your views here.
-# class RegistrationAPIView(APIView):
-#     permission_classes = (AllowAny,)
-#     serializer_class = RegistrationSerializer
-#     renderer_classes = (UserJSONRenderer,)
-    
-#     def post(self, request):
-#         user = request.data
+        serializer = UserRegisterSerializer(data=request.data)
         
-#         serializer = self.serializer_class(data=user)
-#         serializer.is_valid(raise_exception=True)
-#         serializer.save()
+        if serializer.is_valid():
+            user = serializer.save(request)
+            token = TokenObtainPairSerializer.get_token(user)
+            access_token = str(token.access_token)
+            refresh_token = str(token)
+            res = Response(
+                {
+                    "user": serializer.data,
+                    "message": "register successs",
+                    "token": {
+                        "access": access_token,
+                        "refresh": refresh_token,
+                    },
+                },
+                status=status.HTTP_200_OK,
+            )
+            
+            # jwt 토큰 => 쿠키에 저장
+            res.set_cookie("access", access_token, httponly=True)
+            res.set_cookie("refresh", refresh_token, httponly=True)
+            
+            return res
+        else: print("serializer.errors:", serializer.errors)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            
 
-#         return Response(serializer.data, status=status.HTTP_201_CREATED)
+class AuthAPIView(APIView):
+    # 유저 정보 확인
+    def get(self, request):
+        try:
+            # access token을 decode 해서 유저 id 추출 => 유저 식별
+            access = request.COOKIES['access']
+            payload = jwt.decode(access, SECRET_KEY, algorithms=['HS256'])
+            pk = payload.get('user_id')
+            user = get_object_or_404(User, pk=pk)
+            serializer = UserSerializer(instance=user)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
-# class CustomRegisterView(RegisterView):
-#     serializer_class = CustomRegisterSerializer
+        except(jwt.exceptions.ExpiredSignatureError):
+            # 토큰 만료 시 토큰 갱신
+            data = {'refresh': request.COOKIES.get('refresh', None)}
+            serializer = TokenRefreshSerializer(data=data)
+            if serializer.is_valid(raise_exception=True):
+                access = serializer.data.get('access', None)
+                refresh = serializer.data.get('refresh', None)
+                payload = jwt.decode(access, SECRET_KEY, algorithms=['HS256'])
+                pk = payload.get('user_id')
+                user = get_object_or_404(User, pk=pk)
+                serializer = UserSerializer(instance=user)
+                res = Response(serializer.data, status=status.HTTP_200_OK)
+                res.set_cookie('access', access)
+                res.set_cookie('refresh', refresh)
+                return res
+            raise jwt.exceptions.InvalidTokenError
 
+        except(jwt.exceptions.InvalidTokenError):
+            # 사용 불가능한 토큰일 때
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
-# class LoginAPIView(APIView):
-#     permission_classes = (AllowAny,)
-#     renderer_classes = (UserJSONRenderer,)
-#     serializer_class = LoginSerializer
-    
-#     # 1.
-#     def post(self, request):
-#         # 2.
-#         user = request.data
-        
-#         # 3.
-#         serializer = self.serializer_class(data=user)
-#         serializer.is_valid(raise_exception=True)
-        
-#         # 4.
-#         return Response(serializer.data, status=status.HTTP_200_OK)
-    
+    # 로그인
+    def post(self, request):
+        # 유저 인증
+        user = authenticate(
+            email=request.data.get("email"), password=request.data.get("password")
+        )
+        # 이미 회원가입 된 유저일 때
+        if user is not None:
+            serializer = UserSerializer(user)
+            # jwt 토큰 접근
+            token = TokenObtainPairSerializer.get_token(user)
+            refresh_token = str(token)
+            access_token = str(token.access_token)
+            res = Response(
+                {
+                    "user": serializer.data,
+                    "message": "login success",
+                    "token": {
+                        "access": access_token,
+                        "refresh": refresh_token,
+                    },
+                },
+                status=status.HTTP_200_OK,
+            )
+            # jwt 토큰 => 쿠키에 저장
+            res.set_cookie("access", access_token, httponly=True)
+            res.set_cookie("refresh", refresh_token, httponly=True)
+            return res
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
-# class UserRetrieveUpdateAPIView(RetrieveUpdateAPIView):
-#     permission_classes = (IsAuthenticated,)
-#     renderer_classes = (UserJSONRenderer,)
-#     serializer_class = UserSerializer
-    
-#     # 1.
-#     def get(self, request, *args, **kwargs):
-#         # 2.
-#         serializer = self.serializer_class(request.user)
-#         return Response(serializer.data, status=status.HTTP_200_OK)
-#     # 3.
-#     def patch(self, request, *args, **kwargs):
-#         serializer_data = request.data
-#         # 4.
-#         serializer = self.serializer_class(
-#             request.user, data=serializer_data, partial=True
-#         )
-        
-#         serializer.is_valid(raise_exception=True)
-#         # 5.
-#         serializer.save()
-        
-#         return Response(serializer.data, status=status.HTTP_200_OK)
+    # 로그아웃
+    def delete(self, request):
+        # 쿠키에 저장된 토큰 삭제 => 로그아웃 처리
+        response = Response({
+            "message": "Logout success"
+            }, status=status.HTTP_202_ACCEPTED)
+        response.delete_cookie("access")
+        response.delete_cookie("refresh")
+        return response

@@ -14,7 +14,7 @@ class User(AbstractBaseUser, TimestampedModel):
     nickname = models.CharField(max_length=50, unique=True)
     
     is_staff = models.BooleanField(default=False)
-    # is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=True)
     
     # 로그인시 id로 사용할 필드 지정
     USERNAME_FIELD = 'email'
