@@ -191,8 +191,6 @@ ACCOUNT_EMAIL_VERIFICATION = 'none'
 
 REST_AUTH = {
     'USE_JWT': True,
-    'JWT_AUTH_COOKIE': 'auth_token',
-    'JWT_AUTH_REFRESH_COOKIE': 'refresh_token',
 }
 
 ACCOUNT_ADAPTER = 'User.api.adapter.UserAdapter'
