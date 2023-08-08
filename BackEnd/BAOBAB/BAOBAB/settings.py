@@ -61,6 +61,7 @@ INSTALLED_APPS = [
     "rest_framework",
     'rest_framework.authtoken',
     "rest_framework_simplejwt",
+    'rest_framework_simplejwt.token_blacklist',
     
     'dj_rest_auth',
     'dj_rest_auth.registration',
@@ -189,8 +190,13 @@ ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_EMAIL_REQUIRED = True            # email 필드 사용 o
 ACCOUNT_EMAIL_VERIFICATION = 'none'
 
+ACCOUNT_ADAPTER = 'User.api.adapter.UserAdapter'
+
 REST_AUTH = {
     'USE_JWT': True,
 }
 
-ACCOUNT_ADAPTER = 'User.api.adapter.UserAdapter'
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+}
