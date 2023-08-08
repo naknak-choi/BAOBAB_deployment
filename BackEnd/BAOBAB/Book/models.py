@@ -75,6 +75,8 @@ def upload_book_cover_path(instance, filename):
     return f'media/{instance.book_id.book_name}/cover/{timezone.now().strftime("%Y%m%d_%H%M%S")}_{filename}'
 
 class BookFile(models.Model):
+    file_id = models.AutoField(primary_key=True)
+    
     book_id = models.ForeignKey(BookInfo, on_delete=models.CASCADE)
     page_image = models.ImageField(upload_to=upload_book_page_path)
     page_num = models.PositiveIntegerField(default=0)
