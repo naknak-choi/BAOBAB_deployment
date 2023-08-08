@@ -7,6 +7,7 @@ class AnnotationInfo(models.Model):
     
     user_id = models.ForeignKey('User.User', on_delete=models.CASCADE, related_name='user_annotation')
     book_id = models.ForeignKey('Book.BookInfo', on_delete=models.CASCADE, related_name='book_annotation')
+    file_id = models.ForeignKey('Book.BookFile', on_delete=models.CASCADE, related_name='file_annotation')
     
     annotation_num = models.IntegerField(default=1)
     
