@@ -72,6 +72,7 @@ INSTALLED_APPS = [
     
     "Annotation",
     "Book",
+    "BookRating",
     "Bookmark",
     "Category",
     "Comment",
