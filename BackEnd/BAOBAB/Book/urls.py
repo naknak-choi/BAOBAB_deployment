@@ -25,6 +25,4 @@ urlpatterns = [
     
     path("list/", user_list),
     path("detail/<int:pk>/", user_detail),
-    
-    path("ratingBook/<int:pk>/", views.BookStatsAddView.as_view()),
 ]
