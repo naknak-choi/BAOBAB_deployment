@@ -61,7 +61,7 @@ class BookInfo(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.book_Name
+        return self.book_name
     
     def clean(self):
         if self.subCategory and self.mainCategory:
@@ -82,7 +82,7 @@ class BookFile(models.Model):
     page_num = models.PositiveIntegerField(default=0)
     
     def __str__(self):
-        return self.book_id.book_name + " : " + self.page_num + "Page"
+        return self.book_id.book_name + " : " + str(self.page_num) + "Page"
 
 
 class BookCover(models.Model):

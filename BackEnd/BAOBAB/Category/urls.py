@@ -3,6 +3,7 @@ from . import views
 
 category_create = views.CategoryViewSet.as_view({
     'post': 'create',
+    'get': 'list',
 })
 
 category_edit = views.CategoryViewSet.as_view({
