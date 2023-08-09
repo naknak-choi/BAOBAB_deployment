@@ -1,6 +1,13 @@
 from .serializers import UserRegisterSerializer, UserSerializer
-from BAOBAB.settings import SECRET_KEY
 from User.models import User
+
+from UserBookLike.models import UserBookLike
+from UserBookLike.serializers import UserBookLikeSerializer
+
+from Annotation.models import Annotation
+from Annotation.serializers import AnnotationSerializer
+
+from BAOBAB.settings import SECRET_KEY
 
 from dj_rest_auth.registration.views import RegisterView
 
@@ -168,3 +175,32 @@ class UserPasswordResetView(APIView):
         user.set_password(new_password)
         user.save()
         return Response(respone, status=status.HTTP_200_OK)
+    
+class UserBookLikeView(APIView):
+    def get(self, request):
+        user = request.user
+        book_like = UserBookLike.objects.filter(user_id=user)
+        serializer = UserBookLikeSerializer(book_like, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+class UserAnnotationView(APIView):
+    def get(self, request):
+        user = request.user
+        annotation = Annotation.objects.filter(user_id=user)
+        serializer = AnnotationSerializer(annotation, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+# class UserCommentView(APIView):
+#     def get(self, request):
+#         user = request.user
+#         comment = Comment.objects.filter(user_id=user)
+#         serializer = CommentSerializer(comment, many=True)
+#         return Response(serializer.data, status=status.HTTP_200_OK)
+
+# class UserBookMarkView(APIView):
+#     def get(self, request, *args, **kwargs):
+#         user = request.user
+#         book = Book.objects.get(pk=kwargs['pk'])
+#         bookmark = BookMark.objects.filter(user_id=user, book_id=book)
+#         serializer = BookMarkSerializer(bookmark, many=True)
+#         return Response(serializer.data, status=status.HTTP_200_OK)
