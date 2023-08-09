@@ -4,19 +4,19 @@ from Book.models import *
 class BookFileSerializer(serializers.ModelSerializer):
     class Meta:
         model = BookFile
-        fields = ['book_file']
+        fields = '__all__'
         
 class BookCoverSerializer(serializers.ModelSerializer):
     class Meta:
         model = BookCover
-        fields = ['book_cover']
+        fields = '__all__'
         
 # BookInfo 정보 + 관련된 BookFile, BookCover 정보를 한번에 보여주기 위한 Serializer
 class BookStaffSerializer(serializers.ModelSerializer):
     page_image = serializers.ImageField(write_only=True)
     book_cover = serializers.ImageField(write_only=True)
     
-    page_image_data = BookFileSerializer(source='bookfile', read_only=True, many = True)
+    page_image_data = BookFileSerializer(source='bookfile_set', read_only=True, many = True)
     book_cover_data = BookCoverSerializer(source='bookcover', read_only=True)
     class Meta:
         model = BookInfo
@@ -33,7 +33,7 @@ class BookStaffSerializer(serializers.ModelSerializer):
             'page_image',
             'book_cover',
             'page_image_data',
-            'book_cover_data'
+            'book_cover_data',
             ]
 
     # def create(self, validated_data):
@@ -65,7 +65,7 @@ class BookStaffSerializer(serializers.ModelSerializer):
     #     return super(BookStaffSerializer, self).update(instance, validated_data)
     
 class BookUserSerializer(serializers.ModelSerializer):
-    book_file = BookFileSerializer(source='bookfile', read_only=True)
+    page_image = BookFileSerializer(source='bookfile_set', read_only=True, many = True)
     book_cover = BookCoverSerializer(source='bookcover', read_only=True)
     class Meta:
         model = BookInfo

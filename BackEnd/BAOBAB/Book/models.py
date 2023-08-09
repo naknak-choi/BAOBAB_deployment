@@ -5,8 +5,12 @@ from django.core.exceptions import ValidationError
 from Category.models import Category
 
 
-def default_category():
+def default_main_category():
     default = Category.objects.get(category_name='미분류')
+    return default.pk
+
+def default_sub_category():
+    default = Category.objects.get(category_name='분류 없음')
     return default.pk
 
 def main_category_validator(value):
@@ -31,7 +35,7 @@ class BookInfo(models.Model):
         on_delete=models.SET_DEFAULT,
         related_name='mainCategory',
         blank=True,
-        default=default_category(),
+        default=default_main_category(),
         validators=[main_category_validator],
     )
     subCategory = models.ForeignKey(
@@ -39,7 +43,7 @@ class BookInfo(models.Model):
         on_delete=models.SET_DEFAULT,
         related_name='subCategory',
         blank=True,
-        default=default_category(),
+        default=default_sub_category(),
         validators=[sub_category_validator],
     )
 
