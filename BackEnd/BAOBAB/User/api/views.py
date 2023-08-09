@@ -71,7 +71,7 @@ class LoginView(APIView):
             res.set_cookie("refresh", refresh_token, httponly=True)
             return res
         else:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error' : '존재하지 않는 회원정보입니다.'}, status=status.HTTP_400_BAD_REQUEST)
 class MypageView(APIView):
     # 유저 정보 확인
     def get(self, request):

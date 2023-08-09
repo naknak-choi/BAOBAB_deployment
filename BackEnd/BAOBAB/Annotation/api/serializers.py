@@ -18,26 +18,29 @@ class AnnotationSerializer(serializers.ModelSerializer):
         model = Annotation
         fields = ['annotation_id', 'annotation']
         
-class AnnotationInfoSerializer(serializers.ModelSerializer):
-    annotation = serializers.CharField()
-    
-    annotation_text = AnnotationSerializer(source='annotation', read_only=True)
+class AnnotationCreateSerializer(serializers.ModelSerializer):
+    annotation = serializers.CharField(write_only=True)
+    page = serializers.IntegerField(write_only=True)
     class Meta:
         model = AnnotationInfo
-        fields = ['annotation_id', 'page', 'annotation_text', 'annotation']
+        fields = ['annotation_id', 'page', 'annotation']
         
     def create(self, validated_data):
         user = User.object.get(id=self.context.get('user_id'))
         book = BookInfo.objects.get(book_id=self.context.get('book_id'))
+        bookfile = self.context.get('book_page_file')
         
         if user is None:
             return Response({"error":"존재하지 않는 유저입니다."},status=status.HTTP_400_BAD_REQUEST)
         if book is None:
             return Response({"error":"존재하지 않는 책입니다."},status=status.HTTP_400_BAD_REQUEST)
+        if bookfile is None:
+            return Response({"error":"존재하지 않는 페이지입니다."},status=status.HTTP_400_BAD_REQUEST)
         
         annotation_info = AnnotationInfo.objects.create(
             book_id=book,
             user_id=user,
+            file_id=bookfile,
             page=validated_data['page'],
         )
         annotation = Annotation.objects.create(
@@ -46,6 +49,13 @@ class AnnotationInfoSerializer(serializers.ModelSerializer):
         )
         return annotation_info
     
+class AnnotationEditSerializer(serializers.ModelSerializer):
+    annotation = AnnotationSerializer()
+    class Meta:
+        model = AnnotationInfo
+        # fields = ['annotation_id', 'page', 'annotation']
+        fields = '__all__'
+        
     def update(self, instance, validated_data):
         annotation_info = instance
         annotation = annotation_info.annotation

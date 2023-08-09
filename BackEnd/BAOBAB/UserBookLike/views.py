@@ -30,10 +30,7 @@ class UserBookLikeView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-class UserBookLikeDeleteView(APIView):
-    serializer_class = UserBookLikeSerializer
-    
+        
     def delete(self, request, *args, **kwargs):
         user_id = self.request.user
         book_id = kwargs.get('pk')
@@ -47,3 +44,17 @@ class UserBookLikeDeleteView(APIView):
         
         book_like.delete()
         return Response(data={"message": "성공적으로 삭제되었습니다."}, status=status.HTTP_204_NO_CONTENT)
+    
+    def get(self, request, *args, **kwargs):
+        user_id = self.request.user
+        book_id = kwargs.get('pk')
+        
+        book = BookInfo.objects.get(book_id=book_id)
+        if book is None:
+            return Response({"error":"존재하지 않는 책입니다."},status=status.HTTP_400_BAD_REQUEST)
+        book_like = UserBookLike.objects.filter(user_id=user_id, book_id=book_id)
+        if not book_like.exists():
+            return Response({"error" : "좋아요를 누르지 않은 책입니다."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        serializer = UserBookLikeSerializer(book_like[0])
+        return Response(serializer.data, status=status.HTTP_200_OK)
