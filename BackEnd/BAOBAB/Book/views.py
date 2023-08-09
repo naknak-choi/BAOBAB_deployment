@@ -58,9 +58,20 @@ class BookStaffView(APIView):
         return Response({"message": "업로드 성공"}, status=status.HTTP_201_CREATED)
     
     def delete(self, request, *args, **kwargs):
-        book = BookInfo.objects.get(book_id=request.data['book_id'])
+        book = BookInfo.objects.get(book_id=kwargs.get('pk'))
         book.delete()
         return Response({"message": "삭제 성공"}, status=status.HTTP_200_OK)
+    
+    def put(self, request, *args, **kwargs):
+        book = BookInfo.objects.get(book_id=request.data['book_id'])
+        book_cover_image = request.FILES.get('book_cover')
+        if book_cover_image:
+            cover_serializer = BookCoverSerializer(data={'book_cover': book_cover_image, 'book_id': book.book_id})
+            if cover_serializer.is_valid():
+                cover_serializer.save()
+            else:
+                return Response(cover_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"message": "수정 성공"}, status=status.HTTP_200_OK)
     
 class BookUserView(viewsets.ModelViewSet):
     queryset = BookInfo.objects.all()
