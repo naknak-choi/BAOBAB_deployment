@@ -2,15 +2,15 @@ from .serializers import UserRegisterSerializer, UserSerializer
 from User.models import User
 
 from UserBookLike.models import UserBookLike
-from UserBookLike.serializers import UserBookLikeSerializer
+from UserBookLike.api.serializers import UserBookLikeSerializer
 
-from Annotation.models import Annotation
-from Annotation.serializers import AnnotationSerializer
+from Annotation.models import AnnotationInfo
+from Annotation.api.serializers import AnnotationEditSerializer
 
 from Book.models import BookInfo
 
 from Bookmark.models import Bookmark
-from Bookmark.serializers import BookmarkSerializer
+from Bookmark.api.serializers import BookmarkSerializer
 
 from BAOBAB.settings import SECRET_KEY
 
@@ -192,8 +192,8 @@ class UserBookLikeView(APIView):
 class UserAnnotationView(APIView):
     def get(self, request):
         user = request.user
-        annotation = Annotation.objects.filter(user_id=user)
-        serializer = AnnotationSerializer(annotation, many=True)
+        annotation = AnnotationInfo.objects.filter(user_id=user)
+        serializer = AnnotationEditSerializer(annotation, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
 # class UserCommentView(APIView):

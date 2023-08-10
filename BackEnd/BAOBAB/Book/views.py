@@ -63,7 +63,16 @@ class BookStaffView(APIView):
         return Response({"message": "삭제 성공"}, status=status.HTTP_200_OK)
     
     def put(self, request, *args, **kwargs):
-        book = BookInfo.objects.get(book_id=request.data['book_id'])
+        book = BookInfo.objects.filter(book_id=kwargs.get('book_id')).first()
+        if book is None:
+            return Response({"message": "존재하지 않는 책입니다."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        book_serializer = BookStaffSerializer(book, data=request.data, partial=True)
+        if book_serializer.is_valid():
+            book_serializer.save()
+        else:
+            return Response(book_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
         book_cover_image = request.FILES.get('book_cover')
         if book_cover_image:
             cover_serializer = BookCoverSerializer(data={'book_cover': book_cover_image, 'book_id': book.book_id})

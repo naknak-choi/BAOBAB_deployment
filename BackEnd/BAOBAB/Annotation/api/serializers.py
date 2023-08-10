@@ -53,14 +53,4 @@ class AnnotationEditSerializer(serializers.ModelSerializer):
     annotation = AnnotationSerializer()
     class Meta:
         model = AnnotationInfo
-        # fields = ['annotation_id', 'page', 'annotation']
         fields = '__all__'
-        
-    # def update(self, instance, validated_data):
-    #     annotation_info = instance
-    #     annotation = annotation_info.annotation
-    #     annotation_text = validated_data.get('annotation')
-    #     print(annotation_text)
-    #     annotation.annotation = annotation_text
-    #     annotation.save()
-    #     return annotation_info
