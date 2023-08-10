@@ -71,7 +71,7 @@ class BookRatingView(APIView):
         book.average_rating = (prev_rating - float(book_rating[0].rating) + float(request.data['rating'])) / (rating_count)
         book.save()
         
-        serializer = self.serializer_class(data=request.data)
+        serializer = self.serializer_class(data=request.data, partial=True)
         if serializer.is_valid():
             serializer.update(book_rating[0], serializer.validated_data)
             return Response(serializer.data, status=status.HTTP_200_OK)

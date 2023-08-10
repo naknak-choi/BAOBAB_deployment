@@ -12,4 +12,4 @@ class Bookmark(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.bookmark_name
+        return self.book_id.book_name + " " + str(self.file_id.page) + " " + str(self.created_at)

@@ -83,10 +83,10 @@ class BookFile(models.Model):
     
     book_id = models.ForeignKey(BookInfo, on_delete=models.CASCADE)
     page_image = models.ImageField(upload_to=upload_book_page_path)
-    page_num = models.PositiveIntegerField(default=0)
+    page = models.PositiveIntegerField(default=0)
     
     def __str__(self):
-        return self.book_id.book_name + " : " + str(self.page_num) + "Page"
+        return self.book_id.book_name + " : " + str(self.page) + "Page"
 
 
 class BookCover(models.Model):

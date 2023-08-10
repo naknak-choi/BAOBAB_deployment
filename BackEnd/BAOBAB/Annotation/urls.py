@@ -9,5 +9,5 @@ from . import views
 urlpatterns = [
     path('create/<int:book_id>/', AnnotationCreateView.as_view(), name='annotation_create'),
     path('list/<int:book_id>/', AnnotationListView.as_view(), name='annotation_list'),
-    path('list/<int:book_id>/<int:list_id>/', AnnotationListView.as_view(), name='annotation_list'),
+    path('list/<int:book_id>/<int:annotation_id>/', AnnotationListView.as_view(), name='annotation_list'),
 ]

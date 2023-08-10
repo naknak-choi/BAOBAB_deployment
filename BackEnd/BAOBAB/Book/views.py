@@ -40,10 +40,10 @@ class BookStaffView(APIView):
             subCategory = sub_Category,
         )
         
-        page_num = 1
+        page = 1
         for image in uploded_pages:
-            page_serializer = BookFileSerializer(data={'page_image': image, 'book_id': book.book_id, 'page_num': page_num})
-            page_num += 1
+            page_serializer = BookFileSerializer(data={'page_image': image, 'book_id': book.book_id, 'page': page})
+            page += 1
             if page_serializer.is_valid():
                 page_serializer.save()
             else:

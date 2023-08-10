@@ -119,7 +119,8 @@ class LogoutView(APIView):
 class UserUpdateView(APIView):
     def put(self, request):
         user = request.user
-        serializer = UserSerializer(user, data=request.data, partial=True)
+        data_without_password = {k: v for k, v in request.data.items() if k != 'password'}
+        serializer = UserSerializer(user, data=data_without_password, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)

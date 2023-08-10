@@ -10,7 +10,7 @@ class UserBookLikeView(APIView):
         
     def post(self, request, *args, **kwargs):
         user_id = self.request.user
-        book_id = kwargs.get('pk')
+        book_id = kwargs.get('book_id')
         
         book = BookInfo.objects.get(book_id=book_id)
         if book is None:
@@ -33,7 +33,7 @@ class UserBookLikeView(APIView):
         
     def delete(self, request, *args, **kwargs):
         user_id = self.request.user
-        book_id = kwargs.get('pk')
+        book_id = kwargs.get('book_id')
         
         book = BookInfo.objects.get(book_id=book_id)
         if book is None:
@@ -47,7 +47,7 @@ class UserBookLikeView(APIView):
     
     def get(self, request, *args, **kwargs):
         user_id = self.request.user
-        book_id = kwargs.get('pk')
+        book_id = kwargs.get('book_id')
         
         book = BookInfo.objects.get(book_id=book_id)
         if book is None:
