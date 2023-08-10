@@ -7,6 +7,11 @@ from UserBookLike.serializers import UserBookLikeSerializer
 from Annotation.models import Annotation
 from Annotation.serializers import AnnotationSerializer
 
+from Book.models import BookInfo
+
+from Bookmark.models import Bookmark
+from Bookmark.serializers import BookmarkSerializer
+
 from BAOBAB.settings import SECRET_KEY
 
 from dj_rest_auth.registration.views import RegisterView
@@ -16,9 +21,9 @@ from django.shortcuts import get_object_or_404
 
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenRefreshSerializer
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework.views import APIView
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 import jwt
 
@@ -197,10 +202,10 @@ class UserAnnotationView(APIView):
 #         serializer = CommentSerializer(comment, many=True)
 #         return Response(serializer.data, status=status.HTTP_200_OK)
 
-# class UserBookMarkView(APIView):
-#     def get(self, request, *args, **kwargs):
-#         user = request.user
-#         book = Book.objects.get(pk=kwargs['pk'])
-#         bookmark = BookMark.objects.filter(user_id=user, book_id=book)
-#         serializer = BookMarkSerializer(bookmark, many=True)
-#         return Response(serializer.data, status=status.HTTP_200_OK)
+class UserBookMarkView(APIView):
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        book = BookInfo.objects.get(pk=kwargs['pk'])
+        bookmark = Bookmark.objects.filter(user_id=user, book_id=book)
+        serializer = BookmarkSerializer(bookmark, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
