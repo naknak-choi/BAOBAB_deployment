@@ -35,7 +35,7 @@ def send_verification_email(user):
     link = f"http://127.0.0.1:8000/user/verify_email/token={token}"
 
     subject = '[BAOBAB] 이메일 인증을 완료해주세요.'
-    message = f'다음 링크를 클릭하여 이메일 인증을 완료해주세요: {link}'
+    message = f'다음 링크를 클릭하여 이메일 인증을 완료해주세요: \n {link}'
     from_email = settings.EMAIL_HOST_USER # settings.py에서 설정한 발신 이메일
     recipient_list = [user.email]
     
