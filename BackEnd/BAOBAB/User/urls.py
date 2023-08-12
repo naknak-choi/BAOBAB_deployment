@@ -1,9 +1,10 @@
 from django.urls import path
-from .api.views import *
-
+from .views import *
 
 urlpatterns = [
     path('register/', CustomRegisterView.as_view(), name='register'),
+    
+    path('verify_email/token=<str:token>', VerifyEmailView.as_view(), name='verify_email'),
     
     path('login/', LoginView.as_view(), name='login'), # post
     path('logout/', LogoutView.as_view(), name='logout'), # delete
@@ -15,6 +16,6 @@ urlpatterns = [
     path('password/reset/', UserPasswordResetView.as_view(), name='password_reset'), # post
     
     # refresh token을 body에 넣어서 post
-    # 새로운 access token을 받아옴
+    # 새로운 access, refresh token을 받아옴
     path("auth/refresh/", CookieTokenObtainPairView.as_view()),
 ]

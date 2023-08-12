@@ -1,4 +1,5 @@
 secrets.json
+settings.json
 *.log
 *.pot
 *.pyc

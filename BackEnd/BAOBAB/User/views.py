@@ -1,4 +1,5 @@
-from .serializers import UserRegisterSerializer, UserSerializer
+from .api.serializers import UserRegisterSerializer, UserSerializer
+from .utils import *
 from User.models import User
 
 from UserBookLike.models import UserBookLike
@@ -26,6 +27,7 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 import jwt
+import time
 
 class CustomRegisterView(RegisterView):
     def post(self, request, *args, **kwargs):
@@ -33,6 +35,7 @@ class CustomRegisterView(RegisterView):
         
         if serializer.is_valid():
             user = serializer.save(request)
+            user.is_active = False
             token = TokenObtainPairSerializer.get_token(user)
             access_token = str(token.access_token)
             refresh_token = str(token)
@@ -48,18 +51,22 @@ class CustomRegisterView(RegisterView):
                 status=status.HTTP_200_OK,
             )
             
-            # jwt 토큰 => 쿠키에 저장
-            res.set_cookie("access", access_token, httponly=True)
-            res.set_cookie("refresh", refresh_token, httponly=True)
+            user.save()
+            send_verification_email(user)
             
             return res
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+# class VerifyEmailView(APIView):
+#     def
+    
 class LoginView(APIView):
     def post(self, request):
         # 유저 인증
         user = authenticate(
             email=request.data.get("email"), password=request.data.get("password")
         )
+
         # 이미 회원가입 된 유저일 때
         if user is not None:
             serializer = UserSerializer(user)
@@ -79,8 +86,8 @@ class LoginView(APIView):
                 status=status.HTTP_200_OK,
             )
             # jwt 토큰 => 쿠키에 저장
-            res.set_cookie("access", access_token, httponly=True)
-            res.set_cookie("refresh", refresh_token, httponly=True)
+            # res.set_cookie("access", access_token, httponly=True)
+            # res.set_cookie("refresh", refresh_token, httponly=True)
             return res
         else:
             return Response({'error' : '존재하지 않는 회원정보입니다.'}, status=status.HTTP_400_BAD_REQUEST)
@@ -157,7 +164,7 @@ class UserDeleteView(APIView):
     def delete(self, request):
         user = request.user
         user.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response({"detail" : "성공적으로 삭제되었습니다."}, status=status.HTTP_204_NO_CONTENT)
     
 class UserPasswordChangeView(APIView):
     def post(self, request):
@@ -210,3 +217,16 @@ class UserBookMarkView(APIView):
         bookmark = Bookmark.objects.filter(user_id=user, book_id=book)
         serializer = BookmarkSerializer(bookmark, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+class VerifyEmailView(APIView):
+    def get(self, request, *args, **kwargs):
+        print(self.kwargs['token'])
+        token = self.kwargs['token']
+        decoded_user_id, decoded_email, decoded_timestamp = verify_email_token(token)
+        if decoded_timestamp + 60*60 < time.time():
+            return Response({'detail' : '이메일 인증 시간이 만료되었습니다.'}, status=status.HTTP_400_BAD_REQUEST)
+        user = User.object.get(pk=decoded_user_id)
+        if user.email == decoded_email:
+            user.is_active = True
+            user.save()
+            return Response({'detail' : '이메일 인증이 완료되었습니다.'}, status=status.HTTP_200_OK)
