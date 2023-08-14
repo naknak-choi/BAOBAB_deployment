@@ -1,8 +1,9 @@
 from .views import *
+from Annotation.views import AnnotationCreateView, AnnotationListView
 from BookRating.views import BookRatingView
 from Bookmark.views import BookmarkView
 from UserBookLike.views import UserBookLikeView
-from Annotation.views import AnnotationCreateView, AnnotationListView
+from Comment.views import CommentCreateView, CommetEditView
 
 from django.urls import path
 
@@ -21,12 +22,20 @@ urlpatterns = [
     
     path('', user_list_view, name='user-list'),
     path('detail/<int:pk>/', user_detail_view, name='user-detail'),
-    path('detail/<int:book_id>/bookmark/', BookmarkView.as_view(), name='user-bookmark'),
-    path('detail/<int:book_id>/userbooklike', UserBookLikeView.as_view(), name='user-booklike'),
-    path('detail/<int:book_id>/annotation/', AnnotationCreateView.as_view(), name='user-annotation'),
-    path('detail/<int:book_id>/annotation/<int:annotation_id>/', AnnotationListView.as_view(), name='user-annotation'),
     
-    path('detail/<int:book_id>/rating/', BookRatingView.as_view(), name='user-rating'),
+    path('detail/<int:book_id>/bookmark/', BookmarkView.as_view(), name='user-bookmark'),
+    
+    path('detail/<int:book_id>/userbooklike/', UserBookLikeView.as_view(), name='user-booklike'),
+    
+    path('detail/<int:book_id>/comment/create/', CommentCreateView.as_view(), name='user-comment'),
+    path('detail/<int:book_id>/comment/list/', BookCommentListView.as_view(), name='user-comment'),
+    path('detail/<int:book_id>/comment/<int:comment_id>/', CommetEditView.as_view(), name='user-comment'),
+    
+    path('detail/<int:book_id>/annotation/create/', AnnotationCreateView.as_view(), name='user-annotation'),
+    path('detail/<int:book_id>/annotation/<int:annotation_id>/', AnnotationListView.as_view(), name='user-annotation'),
+
+    path('detail/<int:book_id>/rating/create/', BookRatingView.as_view(), name='user-rating'),
+    path('detail/<int:book_id>/rating/list/', BookRatingView.as_view(), name='user-rating'),
     path('detail/<int:book_id>/rating/update/', BookRatingView.as_view(), name='user-rating'),
     path('detail/<int:book_id>/rating/delete/', BookRatingView.as_view(), name='user-rating'),
 ]

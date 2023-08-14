@@ -1,21 +1,27 @@
 from .api.serializers import *
+
 from User.api.serializers import *
+
 from Category.models import Category
 
-from rest_framework import generics
+from Book.models import BookInfo
+
+from BookRating.api.serializers import BookRatingUserSerializer
+from BookRating.models import BookRating
+
+from Comment.api.serializers import CommentInfoSerializer
+from Comment.models import CommentInfo
+
 from rest_framework import viewsets
 from rest_framework.views import APIView
 
 from rest_framework.permissions import IsAdminUser, IsAuthenticated, AllowAny
-
-from rest_framework.generics import ListAPIView, CreateAPIView, ListCreateAPIView
 
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.parsers import *
 
 class BookStaffView(APIView):
-    queryset = BookInfo.objects.all()
     serializer_class = BookStaffSerializer
     parser_classes = [MultiPartParser, FileUploadParser]
     # permission_classes = [IsAdminUser]
@@ -86,3 +92,38 @@ class BookUserView(viewsets.ModelViewSet):
     queryset = BookInfo.objects.all()
     serializer_class = BookUserSerializer
     permission_classes = [AllowAny]
+    
+    def retrieve(self, request, *args, **kwargs):
+        book_id = kwargs.get('pk')
+        book = BookInfo.objects.filter(book_id=book_id).first()
+        if book is None:
+            return Response({"message": "존재하지 않는 책입니다."}, status=status.HTTP_400_BAD_REQUEST)
+        else :
+            book.view += 1
+            return Response(self.serializer_class(book).data, status=status.HTTP_200_OK)
+    
+class BookRatingListView(APIView):
+    serializer_class = BookRatingUserSerializer
+    
+    def get(self, request, *args, **kwargs):
+        book_id = kwargs.get('book_id')
+        
+        book = BookInfo.objects.filter(book_id=book_id).first()
+        if book is None:
+            return Response({"message": "존재하지 않는 책입니다."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        rating_list = BookRating.objects.filter(book_id=book_id)
+        return Response(self.serializer_class(rating_list, many=True).data, status=status.HTTP_200_OK)
+    
+class BookCommentListView(APIView):
+    serializer_class = CommentInfoSerializer
+    
+    def get(self, request, *args, **kwargs):
+        book_id = kwargs.get('book_id')
+        
+        book = BookInfo.objects.filter(book_id=book_id).first()
+        if book is None:
+            return Response({"message": "존재하지 않는 책입니다."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        comment_list = CommentInfo.objects.filter(book_id=book_id)
+        return Response(self.serializer_class(comment_list, many=True).data, status=status.HTTP_200_OK)

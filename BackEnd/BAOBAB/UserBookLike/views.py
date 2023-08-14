@@ -18,7 +18,7 @@ class UserBookLikeView(APIView):
         book_like = UserBookLike.objects.filter(user_id=user_id, book_id=book_id)
         if book_like.exists():
             return Response({"error" : "이미 좋아요를 누른 책입니다."}, status=status.HTTP_400_BAD_REQUEST)
-        
+        book.like += 1
         context = {
             'user_id': user_id,
             'book_id': book_id
@@ -41,7 +41,7 @@ class UserBookLikeView(APIView):
         book_like = UserBookLike.objects.filter(user_id=user_id, book_id=book_id)
         if not book_like.exists():
             return Response({"error" : "좋아요를 누르지 않은 책입니다."}, status=status.HTTP_400_BAD_REQUEST)
-        
+        book.lije -= 1
         book_like.delete()
         return Response(data={"message": "성공적으로 삭제되었습니다."}, status=status.HTTP_204_NO_CONTENT)
     

@@ -13,12 +13,19 @@ from Book.models import BookInfo
 from Bookmark.models import Bookmark
 from Bookmark.api.serializers import BookmarkSerializer
 
+from BookRating.models import BookRating
+from BookRating.api.serializers import BookRatingSerializer
+
+from Comment.models import CommentInfo
+from Comment.api.serializers import CommentInfoSerializer
+
 from BAOBAB.settings import SECRET_KEY
 
 from dj_rest_auth.registration.views import RegisterView
 
 from django.contrib.auth import authenticate
 from django.shortcuts import get_object_or_404
+from django.core.mail import send_mail
 
 from rest_framework import status
 from rest_framework.response import Response
@@ -56,9 +63,6 @@ class CustomRegisterView(RegisterView):
             
             return res
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-# class VerifyEmailView(APIView):
-#     def
     
 class LoginView(APIView):
     def post(self, request):
@@ -182,9 +186,14 @@ class UserPasswordResetView(APIView):
         email = request.data.get('email')
         user = get_object_or_404(User, email=email)
         new_password = User.object.make_random_password()
+        
+        subject = '[BAOBAB] 임시 비밀번호 발급 안내'
+        message = '임시 비밀번호 로그인 후 비밀번호를 변경해주세요. \n 임시 비밀번호 : ' + new_password
+        from_email = settings.EMAIL_HOST_USER
         respone = {
             'temp_password': new_password
         }
+        send_mail(subject, message, from_email, [email], fail_silently=False)
         user.set_password(new_password)
         user.save()
         return Response(respone, status=status.HTTP_200_OK)
@@ -203,12 +212,19 @@ class UserAnnotationView(APIView):
         serializer = AnnotationEditSerializer(annotation, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
-# class UserCommentView(APIView):
-#     def get(self, request):
-#         user = request.user
-#         comment = Comment.objects.filter(user_id=user)
-#         serializer = CommentSerializer(comment, many=True)
-#         return Response(serializer.data, status=status.HTTP_200_OK)
+class UserCommentView(APIView):
+    def get(self, request):
+        user = request.user
+        comment = CommentInfo.objects.filter(user_id=user)
+        serializer = CommentInfoSerializer(comment, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+class UserBookRatingView(APIView):
+    def get(self, request):
+        user = request.user
+        book_rating = BookRating.objects.filter(user_id=user)
+        serializer = BookRatingSerializer(book_rating, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 class UserBookMarkView(APIView):
     def get(self, request, *args, **kwargs):
