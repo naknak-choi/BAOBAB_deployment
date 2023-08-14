@@ -191,7 +191,7 @@ class UserPasswordResetView(APIView):
         message = '임시 비밀번호 로그인 후 비밀번호를 변경해주세요. \n 임시 비밀번호 : ' + new_password
         from_email = settings.EMAIL_HOST_USER
         respone = {
-            'temp_password': new_password
+            'temp_password': '임시비밀번호가 발급되었습니다.'
         }
         send_mail(subject, message, from_email, [email], fail_silently=False)
         user.set_password(new_password)
