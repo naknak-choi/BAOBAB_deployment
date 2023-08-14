@@ -10,32 +10,33 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
-from pathlib import Path
 import os, json
+from pathlib import Path
+from django.core.exceptions import ImproperlyConfigured
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
+BASE_DIR = Path(__file__).resolve().parent.parent
+
 secret_file = os.path.join(BASE_DIR, 'secrets.json')  # secrets.json 파일 위치를 명시
 
 with open(secret_file) as f:
     secrets = json.loads(f.read())
 
-def get_secret(setting):
+def get_value(setting):
     """비밀 변수를 가져오거나 명시적 예외를 반환한다."""
     try:
         return secrets[setting]
     except KeyError:
         error_msg = "Set the {} environment variable".format(setting)
         raise ImproperlyConfigured(error_msg)
-
-
-SECRET_KEY = get_secret("SECRET_KEY")
+    
+SECRET_KEY = get_value("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -53,13 +54,34 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    
     "rest_framework",
+    'rest_framework.authtoken',
+    "rest_framework_simplejwt",
+    'rest_framework_simplejwt.token_blacklist',
+    
+    'dj_rest_auth',
+    'dj_rest_auth.registration',
+
+    "django_extensions",
     
     "User",
     
+    "Annotation",
     "Book",
+    "BookRating",
+    "Bookmark",
     "Category",
+    "Comment",
+    "UserBookLike",
 ]
+
+REST_AUTH_REGISTER_SERIALIZERS = {
+    'REGISTER_SERIALIZER': 'User.api.serializers.CustomRegisterSerializer',
+}
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -144,4 +166,57 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-AUTH_USER_MODEL = "User.User"
+AUTH_USER_MODEL = 'User.User'
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        # 'rest_framework.permissions.IsAuthenticated', # 인증된 사용자만 접근
+        # 'rest_framework.permissions.IsAdminUser', # 관리자만 접근
+        'rest_framework.permissions.AllowAny', # 누구나 접근
+    ],
+    'EXCEPTION_HANDLER': 'core.exceptions.core_exception_handler',
+    
+    'NON_FIELD_ERRORS_KEY': 'error',
+    
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
+    ),
+}
+
+
+SITE_ID = 1
+REST_USE_JWT = True
+
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_REQUIRED = True            # email 필드 사용 o
+
+ACCOUNT_ADAPTER = 'User.api.adapter.UserAdapter'
+
+REST_AUTH = {
+    'USE_JWT': True,
+}
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+}
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com' # 메일 호스트 서버
+EMAIL_PORT = '587' # gmail과 통신하는 포트
+EMAIL_HOST_USER = get_value("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = get_value("EMAIL_HOST_PASSWORD")
+EMAIL_USE_TLS = True # TLS 보안 방법
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+ACCOUNT_CONFIRM_EMAIL_ON_GET = True # 유저가 받은 링크를 클릭하면 회원가입 완료되게끔
+
+# ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+ACCOUNT_EMAIL_VERIFICATION = None
+
+EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = '/' # 사이트와 관련한 자동응답을 받을 이메일 주소,'webmaster@localhost'
+
+ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 1
+
+# 이메일에 자동으로 표시되는 사이트 정보
+ACCOUNT_EMAIL_SUBJECT_PREFIX = "[BAOBAB]"
