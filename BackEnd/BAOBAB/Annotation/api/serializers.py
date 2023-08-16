@@ -26,7 +26,7 @@ class AnnotationCreateSerializer(serializers.ModelSerializer):
         fields = ['annotation_id', 'page', 'annotation']
         
     def create(self, validated_data):
-        user = User.object.get(id=self.context.get('user_id'))
+        user = User.objects.get(id=self.context.get('user_id'))
         book = BookInfo.objects.get(book_id=self.context.get('book_id'))
         bookfile = self.context.get('book_page_file')
         

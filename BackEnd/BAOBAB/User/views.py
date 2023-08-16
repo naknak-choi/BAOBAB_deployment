@@ -185,7 +185,7 @@ class UserPasswordResetView(APIView):
     def post(self, request):
         email = request.data.get('email')
         user = get_object_or_404(User, email=email)
-        new_password = User.object.make_random_password()
+        new_password = User.objects.make_random_password()
         
         subject = '[BAOBAB] 임시 비밀번호 발급 안내'
         message = '임시 비밀번호 로그인 후 비밀번호를 변경해주세요. \n 임시 비밀번호 : ' + new_password
@@ -241,7 +241,7 @@ class VerifyEmailView(APIView):
         decoded_user_id, decoded_email, decoded_timestamp = verify_email_token(token)
         if decoded_timestamp + 60*60 < time.time():
             return Response({'detail' : '이메일 인증 시간이 만료되었습니다.'}, status=status.HTTP_400_BAD_REQUEST)
-        user = User.object.get(pk=decoded_user_id)
+        user = User.objects.get(pk=decoded_user_id)
         if user.email == decoded_email:
             user.is_active = True
             user.save()
