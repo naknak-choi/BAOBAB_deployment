@@ -20,7 +20,7 @@ class AnnotationCreateView(APIView):
         if book is None:
             return Response({"error":"존재하지 않는 책입니다."},status=status.HTTP_400_BAD_REQUEST)
         
-        user = User.object.get(id=user_id)
+        user = User.objects.get(id=user_id)
         if user is None:
             return Response({"error":"존재하지 않는 유저입니다."},status=status.HTTP_400_BAD_REQUEST)
 

@@ -21,7 +21,7 @@ class User(AbstractBaseUser, TimestampedModel):
     # 필수로 받을 필드 지정
     REQUIRED_FIELDS = ['username', 'nickname']
     
-    object = UserManager()
+    objects = UserManager()
     
     def has_perm(self, perm, obj=None):
         return True
