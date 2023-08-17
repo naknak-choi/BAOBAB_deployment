@@ -68,8 +68,10 @@ class LoginView(APIView):
     def post(self, request):
         # 유저 인증
         user = authenticate(
-            email=request.data.get("email"), password=request.data.get("password")
+            email=request.data.get("email"),
+            password=request.data.get("password"),
         )
+        
         user.last_login = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
         user.save()
 
@@ -120,13 +122,14 @@ class LogoutView(APIView):
 class UserUpdateView(APIView):
     def put(self, request):
         user = request.user
-        data_without_password = {k: v for k, v in request.data.items() if k != 'password'}
-        serializer = UserSerializer(user, data=data_without_password, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors)
-
+        re_ninkname = request.data.get('nickname')
+        other_user = User.objects.filter(nickname = re_ninkname).first()
+        if other_user is not None:
+            return Response({'error' : '이미 존재하는 닉네임입니다.'}, status=status.HTTP_400_BAD_REQUEST)
+        user.nickname = re_ninkname
+        user.save()
+        return Response({'detail' : '성공적으로 수정되었습니다.'}, status=status.HTTP_200_OK)
+    
 class CookieTokenObtainPairView(TokenObtainPairView):
     def post(self, request, *args, **kwargs):
         serializer = TokenObtainPairSerializer(data=request.data)
