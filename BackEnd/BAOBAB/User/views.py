@@ -19,8 +19,6 @@ from BookRating.api.serializers import BookRatingSerializer
 from Comment.models import CommentInfo
 from Comment.api.serializers import CommentInfoSerializer
 
-from BAOBAB.settings import SECRET_KEY
-
 from dj_rest_auth.registration.views import RegisterView
 
 from django.contrib.auth import authenticate
@@ -29,9 +27,8 @@ from django.core.mail import send_mail
 
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from rest_framework.views import APIView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenRefreshSerializer
+from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 import jwt
@@ -69,7 +66,8 @@ class LoginView(APIView):
     def post(self, request):
         # 유저 인증
         user = authenticate(
-            email=request.data.get("email"), password=request.data.get("password")
+            email=request.data.get("email"),
+            password=request.data.get("password"),
         )
 
         # 이미 회원가입 된 유저일 때
