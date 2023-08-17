@@ -1,0 +1,20 @@
+{
+  "files": {
+    "main.css": "/static/css/main.78c5ba62.css",
+    "main.js": "/static/js/main.d0c546e8.js",
+    "static/media/AppleSDGothicNeoB.ttf": "/static/media/AppleSDGothicNeoB.4175a777557557f7d294.ttf",
+    "static/media/AppleSDGothicNeoM.ttf": "/static/media/AppleSDGothicNeoM.88c00162a2084f97069c.ttf",
+    "static/media/AppleSDGothicNeoEB.ttf": "/static/media/AppleSDGothicNeoEB.ea6bd07739f11db86707.ttf",
+    "static/media/AppleSDGothicNeoSB.ttf": "/static/media/AppleSDGothicNeoSB.24f6918836e50d1e5621.ttf",
+    "static/media/1page.png": "/static/media/1page.07754af839c75a847667.png",
+    "static/media/signup_component.png": "/static/media/signup_component.1216771a2ff04e6f1876.png",
+    "static/media/Group 155.png": "/static/media/Group 155.21c98ba4d5fc5629f870.png",
+    "index.html": "/index.html",
+    "main.78c5ba62.css.map": "/static/css/main.78c5ba62.css.map",
+    "main.d0c546e8.js.map": "/static/js/main.d0c546e8.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.78c5ba62.css",
+    "static/js/main.d0c546e8.js"
+  ]
+}
