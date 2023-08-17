@@ -19,8 +19,6 @@ from BookRating.api.serializers import BookRatingSerializer
 from Comment.models import CommentInfo
 from Comment.api.serializers import CommentInfoSerializer
 
-from BAOBAB.settings import SECRET_KEY
-
 from dj_rest_auth.registration.views import RegisterView
 
 from django.contrib.auth import authenticate
@@ -29,9 +27,9 @@ from django.core.mail import send_mail
 
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenRefreshSerializer
 from rest_framework.views import APIView
-from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 import jwt
 import time
@@ -130,9 +128,9 @@ class UserUpdateView(APIView):
         user.save()
         return Response({'detail' : '성공적으로 수정되었습니다.'}, status=status.HTTP_200_OK)
     
-class CookieTokenObtainPairView(TokenObtainPairView):
+class CookieTokenObtainPairView(TokenRefreshView):
     def post(self, request, *args, **kwargs):
-        serializer = TokenObtainPairSerializer(data=request.data)
+        serializer = TokenRefreshSerializer(data=request.data)
         if serializer.is_valid():
             access_token = serializer.validated_data.get('access')
             refresh_token = serializer.validated_data.get('refresh')
