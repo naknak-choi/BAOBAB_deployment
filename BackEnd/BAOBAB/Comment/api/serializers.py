@@ -8,8 +8,9 @@ class CommentSerializer(serializers.ModelSerializer):
         
 class CommentInfoSerializer(serializers.ModelSerializer):
     comment = serializers.CharField(write_only=True)
-    
-    comment_text = CommentSerializer(read_only=True)
+
+    comment_text = CommentSerializer(source='comment', read_only=True)
+
     class Meta:
         model = CommentInfo
         fields = [

@@ -17,7 +17,7 @@ user_detail_view = BookUserView.as_view({
 
 urlpatterns = [
     path("staff/create/", BookStaffView.as_view()),
-    path("staff/delete/<int:pk>/", BookStaffView.as_view()),
+    path("staff/delete/<int:book_id>/", BookStaffView.as_view()),
     path('staff/update/<int:book_id>/', BookStaffView.as_view(), name='user-update'),
     
     path('', user_list_view, name='user-list'),
@@ -35,7 +35,6 @@ urlpatterns = [
     path('detail/<int:book_id>/annotation/<int:annotation_id>/', AnnotationListView.as_view(), name='user-annotation'),
 
     path('detail/<int:book_id>/rating/create/', BookRatingView.as_view(), name='user-rating'),
-    path('detail/<int:book_id>/rating/list/', BookRatingView.as_view(), name='user-rating'),
     path('detail/<int:book_id>/rating/update/', BookRatingView.as_view(), name='user-rating'),
     path('detail/<int:book_id>/rating/delete/', BookRatingView.as_view(), name='user-rating'),
 ]

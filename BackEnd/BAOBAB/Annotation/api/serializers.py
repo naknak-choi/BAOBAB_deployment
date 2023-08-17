@@ -50,7 +50,7 @@ class AnnotationCreateSerializer(serializers.ModelSerializer):
         return annotation_info
     
 class AnnotationEditSerializer(serializers.ModelSerializer):
-    annotation = AnnotationSerializer()
+    annotation_text = AnnotationSerializer(source = 'annotation', read_only=True)
     class Meta:
         model = AnnotationInfo
-        fields = '__all__'
+        fields = ['annotation_id', 'user_id', 'book_id', 'file_id', 'page', 'annotation_text']

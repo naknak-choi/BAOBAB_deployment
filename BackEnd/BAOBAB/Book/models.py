@@ -57,6 +57,7 @@ class BookInfo(models.Model):
         verbose_name='기증 / 만료 여부',
         default='기증도서',
         )
+    book_introduction = models.TextField()
     
     views = models.PositiveIntegerField(default=0)
     like = models.PositiveIntegerField(default=0)

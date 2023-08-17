@@ -70,6 +70,8 @@ class LoginView(APIView):
         user = authenticate(
             email=request.data.get("email"), password=request.data.get("password")
         )
+        user.last_login = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
+        user.save()
 
         # 이미 회원가입 된 유저일 때
         if user is not None:
@@ -99,35 +101,11 @@ class MypageView(APIView):
     # 유저 정보 확인
     def get(self, request):
         try:
-            # access token을 decode 해서 유저 id 추출 => 유저 식별
-            access = request.COOKIES['access']
-            payload = jwt.decode(access, SECRET_KEY, algorithms=['HS256'])
-            pk = payload.get('user_id')
-            user = get_object_or_404(User, pk=pk)
-            serializer = UserSerializer(instance=user)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-
+            user = request.user
+            serializer = UserSerializer(user)
+            return Response(serializer.data)    
         except(jwt.exceptions.ExpiredSignatureError):
             return Response(status=status.HTTP_401_UNAUTHORIZED) 
-            # 토큰 만료 시 토큰 갱신
-            # data = {'refresh': request.COOKIES.get('refresh', None)}
-            # serializer = TokenRefreshSerializer(data=data)
-            # if serializer.is_valid(raise_exception=True):
-            #     access = serializer.data.get('access', None)
-            #     refresh = serializer.data.get('refresh', None)
-            #     payload = jwt.decode(access, SECRET_KEY, algorithms=['HS256'])
-            #     pk = payload.get('user_id')
-            #     user = get_object_or_404(User, pk=pk)
-            #     serializer = UserSerializer(instance=user)
-            #     res = Response(serializer.data, status=status.HTTP_200_OK)
-            #     res.set_cookie('access', access)
-            #     res.set_cookie('refresh', refresh)
-            #     return res
-            # raise jwt.exceptions.InvalidTokenError
-
-        except(jwt.exceptions.InvalidTokenError):
-            # 사용 불가능한 토큰일 때
-            return Response(status=status.HTTP_400_BAD_REQUEST)
 class LogoutView(APIView):
     # 로그아웃
     def delete(self, request):
@@ -226,11 +204,10 @@ class UserBookRatingView(APIView):
         serializer = BookRatingSerializer(book_rating, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-class UserBookMarkView(APIView):
+class UserBookmarkView(APIView):
     def get(self, request, *args, **kwargs):
         user = request.user
-        book = BookInfo.objects.get(pk=kwargs['pk'])
-        bookmark = Bookmark.objects.filter(user_id=user, book_id=book)
+        bookmark = Bookmark.objects.filter(user_id=user)
         serializer = BookmarkSerializer(bookmark, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     

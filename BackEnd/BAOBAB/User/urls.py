@@ -12,6 +12,12 @@ urlpatterns = [
     path('mypage/', MypageView.as_view(), name='auth'), # get
     path('mypage/update/', UserUpdateView.as_view(), name='update'), # put
     path('mypage/delete/', UserDeleteView.as_view(), name='delete'), # delete
+    
+    path('mypage/like/', UserBookLikeView.as_view(), name='like'), # get
+    path('mypage/annotation/', UserAnnotationView.as_view(), name='annotation'), # get
+    path('mypage/comment/', UserCommentView.as_view(), name='comment'), # get
+    path('mypage/bookmark/', UserBookmarkView.as_view(), name='bookmark'), # get
+    
     path('mypage/password/change/', UserPasswordChangeView.as_view(), name='password_change'), # post
     path('password/reset/', UserPasswordResetView.as_view(), name='password_reset'), # post
     

@@ -34,6 +34,7 @@ class BookStaffSerializer(serializers.ModelSerializer):
             'book_cover',
             'page_image_data',
             'book_cover_data',
+            'book_introduction',
             ]
     
 class BookUserSerializer(serializers.ModelSerializer):

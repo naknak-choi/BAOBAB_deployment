@@ -64,7 +64,7 @@ class BookStaffView(APIView):
         return Response({"message": "업로드 성공"}, status=status.HTTP_201_CREATED)
     
     def delete(self, request, *args, **kwargs):
-        book = BookInfo.objects.get(book_id=kwargs.get('pk'))
+        book = BookInfo.objects.get(book_id=kwargs.get('book_id'))
         book.delete()
         return Response({"message": "삭제 성공"}, status=status.HTTP_200_OK)
     
@@ -99,7 +99,7 @@ class BookUserView(viewsets.ModelViewSet):
         if book is None:
             return Response({"message": "존재하지 않는 책입니다."}, status=status.HTTP_400_BAD_REQUEST)
         else :
-            book.view += 1
+            book.views += 1
             return Response(self.serializer_class(book).data, status=status.HTTP_200_OK)
     
 class BookRatingListView(APIView):
