@@ -92,8 +92,8 @@ class LoginView(APIView):
                 status=status.HTTP_200_OK,
             )
             # jwt 토큰 => 쿠키에 저장
-            # res.set_cookie("access", access_token, httponly=True)
-            # res.set_cookie("refresh", refresh_token, httponly=True)
+            res.set_cookie("access", access_token, httponly=True, max_age=300)
+            res.set_cookie("refresh", refresh_token, httponly=True, max_age=300)
             return res
         else:
             return Response({'error' : '존재하지 않는 회원정보입니다.'}, status=status.HTTP_400_BAD_REQUEST)
