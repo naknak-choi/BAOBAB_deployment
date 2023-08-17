@@ -31,7 +31,8 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework.views import APIView
-from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenRefreshSerializer
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 import jwt
 import time
@@ -70,11 +71,11 @@ class LoginView(APIView):
         user = authenticate(
             email=request.data.get("email"), password=request.data.get("password")
         )
-        user.last_login = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
-        user.save()
 
         # 이미 회원가입 된 유저일 때
         if user is not None:
+            user.last_login = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
+            user.save()
             serializer = UserSerializer(user)
             # jwt 토큰 접근
             token = TokenObtainPairSerializer.get_token(user)
@@ -92,8 +93,8 @@ class LoginView(APIView):
                 status=status.HTTP_200_OK,
             )
             # jwt 토큰 => 쿠키에 저장
-            res.set_cookie("access", access_token, httponly=True, max_age=300)
-            res.set_cookie("refresh", refresh_token, httponly=True, max_age=300)
+            res.set_cookie("access", access_token, httponly=True)
+            res.set_cookie("refresh", refresh_token, httponly=True)
             return res
         else:
             return Response({'error' : '존재하지 않는 회원정보입니다.'}, status=status.HTTP_400_BAD_REQUEST)
@@ -117,19 +118,29 @@ class LogoutView(APIView):
         response.delete_cookie("refresh")
         return response
 
-class UserUpdateView(APIView):
-    def put(self, request):
-        user = request.user
-        data_without_password = {k: v for k, v in request.data.items() if k != 'password'}
-        serializer = UserSerializer(user, data=data_without_password, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors)
+from rest_framework.permissions import IsAuthenticated
 
-class CookieTokenObtainPairView(TokenObtainPairView):
+class UserUpdateView(APIView):
+    # 이 뷰에 접근하기 전에 사용자가 로그인했는지 확인합니다.
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request):
+        current_user = request.user
+        nickname = request.data.get('nickname')
+        user_with_nickname = User.objects.filter(nickname=nickname).first()
+        
+        if user_with_nickname is not None:
+            return Response({'error' : '이미 존재하는 닉네임입니다.'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        current_user.nickname = nickname
+        current_user.save()
+        return Response({'detail' : '성공적으로 수정되었습니다.'}, status=status.HTTP_200_OK)
+
+
+
+class CookieTokenObtainPairView(TokenRefreshView):
     def post(self, request, *args, **kwargs):
-        serializer = TokenObtainPairSerializer(data=request.data)
+        serializer = TokenRefreshSerializer(data={ 'refresh': request.data.get('refresh') })
         if serializer.is_valid():
             access_token = serializer.validated_data.get('access')
             refresh_token = serializer.validated_data.get('refresh')
