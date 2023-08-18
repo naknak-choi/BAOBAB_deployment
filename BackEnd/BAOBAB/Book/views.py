@@ -127,3 +127,16 @@ class BookCommentListView(APIView):
         
         comment_list = CommentInfo.objects.filter(book_id=book_id)
         return Response(self.serializer_class(comment_list, many=True).data, status=status.HTTP_200_OK)
+    
+class BookPageListView(APIView):
+    serilalizer_class = BookFileSerializer
+    
+    def get(self, request, *args, **kwargs):
+        book_id = kwargs.get('book_id')
+        
+        book = BookInfo.objects.filter(book_id=book_id).first()
+        if book is None:
+            return Response({"message": "존재하지 않는 책입니다."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        page_list = BookFile.objects.filter(book_id=book_id)
+        return Response(self.serilalizer_class(page_list, many=True).data, status=status.HTTP_200_OK)

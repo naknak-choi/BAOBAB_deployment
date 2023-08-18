@@ -74,10 +74,10 @@ class BookInfo(models.Model):
                 raise ValidationError("선택한 중분류는 해당 대분류에 속하지 않습니다.")
 
 def upload_book_page_path(instance, filename):
-    return f'{instance.book_id.book_name}/pages/{timezone.now().strftime("%Y%m%d_%H%M%S")}_{filename}'
+    return f'{instance.book_id.book_name}/pages/{filename}'
 
 def upload_book_cover_path(instance, filename):
-    return f'{instance.book_id.book_name}/cover/{timezone.now().strftime("%Y%m%d_%H%M%S")}_{filename}'
+    return f'{instance.book_id.book_name}/cover/{filename}'
 
 class BookFile(models.Model):
     file_id = models.AutoField(primary_key=True)
