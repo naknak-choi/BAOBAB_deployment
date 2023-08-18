@@ -22,6 +22,7 @@ urlpatterns = [
     
     path('', user_list_view, name='user-list'),
     path('detail/<int:pk>/', user_detail_view, name='user-detail'),
+    path('detail/<int:book_id>/page/', BookPageListView.as_view(), name='user-page'),
     
     path('detail/<int:book_id>/bookmark/', BookmarkView.as_view(), name='user-bookmark'),
     

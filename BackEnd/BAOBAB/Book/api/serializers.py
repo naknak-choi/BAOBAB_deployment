@@ -39,7 +39,31 @@ class BookStaffSerializer(serializers.ModelSerializer):
     
 class BookUserSerializer(serializers.ModelSerializer):
     page_image = BookFileSerializer(source='bookfile_set', read_only=True, many = True)
-    book_cover = BookCoverSerializer(source='bookcover', read_only=True)
+    cover_image = BookCoverSerializer(source='bookcover', read_only=True)
     class Meta:
         model = BookInfo
         fields = '__all__'
+        
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        
+        # 첫 페이지 이미지 및 페이지 수 구하기
+        first_page = BookFile.objects.filter(book_id=instance.book_id).first()
+        total_pages = BookFile.objects.filter(book_id=instance.book_id).count()
+        
+        # 직렬화된 출력에 페이지 이미지 및 페이지 수 추가하기
+        if first_page:
+            first_page_serializer = BookFileSerializer(first_page)
+            data['page_image'] = first_page_serializer.data['page_image']
+            print(type(data['page_image']))
+        else:
+            data['page_image'] = None
+        data['total_page'] = total_pages
+
+        page_image = BookCover.objects.filter(book_id=instance.book_id).first()
+        
+        if page_image:
+            page_image_serializer = BookCoverSerializer(page_image)
+            data['cover_image'] = page_image_serializer.data['book_cover']
+            
+        return data
