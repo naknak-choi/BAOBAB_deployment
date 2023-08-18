@@ -43,3 +43,9 @@ class BookUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = BookInfo
         fields = '__all__'
+        
+    # def to_representation(self, instance):
+    #     data = super().to_representation(instance)
+        
+    #     # 첫 페이지 이미지 및 페이지 수 구하기
+    #     # first_page = BookFile.objects.filter(book_id=instance.book_id).f
