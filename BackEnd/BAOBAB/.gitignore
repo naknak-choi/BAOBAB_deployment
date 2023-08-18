@@ -1,4 +1,4 @@
-secrets.json
+#secrets.json
 settings.json
 *.log
 *.pot
