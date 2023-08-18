@@ -42,7 +42,7 @@ def get_value(setting):
 SECRET_KEY = get_value("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['app','13.211.227.97', 'baobab.kro.kr','127.0.0.1']
 
