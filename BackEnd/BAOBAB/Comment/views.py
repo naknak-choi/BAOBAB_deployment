@@ -34,6 +34,8 @@ class CommentCreateView(APIView):
             book_id = book,
             file_id = file_id,
             parentComment_id = parentComment,
+            created_at = request.data.get('created_at'),
+            liked = request.data.get('liked'),
         )
         
         comment = Comment.objects.create(

@@ -23,4 +23,6 @@ class CommentInfoSerializer(serializers.ModelSerializer):
             'parentComment_id',
             'comment',
             'comment_text',
+            'created_at',
+            'liked'
         ]
