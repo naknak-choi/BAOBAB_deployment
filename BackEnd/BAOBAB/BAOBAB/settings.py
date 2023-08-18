@@ -14,7 +14,9 @@ import os, json
 from pathlib import Path
 from django.core.exceptions import ImproperlyConfigured
 from datetime import timedelta
+import mimetypes
 
+mimetypes.add_type("text/javascript", ".js", True)
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 
 # Quick-start development settings - unsuitable for production
