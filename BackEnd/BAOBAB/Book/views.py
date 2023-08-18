@@ -127,3 +127,4 @@ class BookCommentListView(APIView):
         
         comment_list = CommentInfo.objects.filter(book_id=book_id)
         return Response(self.serializer_class(comment_list, many=True).data, status=status.HTTP_200_OK)
+    

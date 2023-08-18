@@ -42,7 +42,7 @@ SECRET_KEY = get_value("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['app','13.211.227.97', 'baobab.kro.kr']
+ALLOWED_HOSTS = ['app','13.211.227.97', 'baobab.kro.kr','127.0.0.1','localhost']
 
 
 # Application definition
@@ -212,7 +212,7 @@ REST_AUTH = {
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=1),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
 }
 
