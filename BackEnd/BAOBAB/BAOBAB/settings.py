@@ -22,6 +22,7 @@ from datetime import timedelta
 
 # SECURITY WARNING: keep the secret key used in production secret!
 BASE_DIR = Path(__file__).resolve().parent.parent
+print(BASE_DIR)
 
 secret_file = os.path.join(BASE_DIR, 'secrets.json')  # secrets.json 파일 위치를 명시
 
@@ -239,6 +240,6 @@ CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
-    "13.211.227.97",
-    'baobab.kro.kr',
+    "http://13.211.227.97",
+    'http://baobab.kro.kr',
 ]
