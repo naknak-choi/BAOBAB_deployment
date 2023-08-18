@@ -42,7 +42,7 @@ SECRET_KEY = get_value("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['13.211.227.97', 'baobab.kro.kr']
+ALLOWED_HOSTS = ['app','13.211.227.97', 'baobab.kro.kr']
 
 
 # Application definition
